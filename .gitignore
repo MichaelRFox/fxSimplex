@@ -1,0 +1,9 @@
+#node modules
+node_modules
+
+#sublimeText files
+fxSimplex.sublime-project
+fxSimplex.sublime-workspace
+
+.DS_Store
+dist/.DS_Store

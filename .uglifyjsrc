@@ -1,0 +1,13 @@
+{
+    
+    "compress": {
+        "drop_console": true,
+        "typeofs": false
+    },
+    "mangle": {
+
+    },
+
+    "warnings": "verbose"
+
+}

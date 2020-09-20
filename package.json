@@ -1,0 +1,46 @@
+{
+  "name": "fxsimplex",
+  "version": "1.0.0",
+  "description": "A javascript implementation of one and two-phase simplex algorithims",
+  "main": "index.js",
+  "scripts": {
+    "test": "babel-tape-runner ./test/**/*.js  | tap-spec",
+    "buildSrc": "npm run rollupSrc && npm run minifyjsSrc",
+    "buildDist": "npm run rollupDist && npm run minifyJs",
+    "rollupDist": "rollup -c rollup.config.dist.js",
+    "rollupSrc": "rollup -c rollup.config.src.js",
+    "minifyJs": "terser ./dist/index.js -o ./dist/index.min.js --config-file .uglifyjsrc",
+    "minifyjsSrc": "terser ./src/index.js -o ./src/index.js --config-file .uglifyjsSrcrc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MichaelRFox/fxSimplex"
+  },
+  "keywords": [
+    "simplex",
+    "optimization",
+    "javascript"
+  ],
+  "author": "Michael R. Fox",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MichaelRFox/fxSimplex/issues"
+  },
+  "homepage": "https://github.com/MichaelRFox/fxSimplex#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.5",
+    "@rollup/plugin-babel": "^5.2.0",
+    "@rollup/plugin-commonjs": "^15.0.0",
+    "@rollup/plugin-node-resolve": "^9.0.0",
+    "babel-tape-runner": "^3.0.0",
+    "core-js": "^3.6.5",
+    "rollup": "^2.26.11",
+    "tap-spec": "^5.0.0",
+    "tape": "^5.0.1",
+    "terser": "^5.3.0"
+  }
+}
