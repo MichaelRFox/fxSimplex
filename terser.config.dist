@@ -22,7 +22,7 @@
         "expression" : false,
         "global_defs" : {},
         "hoist_funs" : false,
-        "hoist_props" : true,
+        "hoist_props" : false,
         "hoist_vars" : false,
         "if_return" : true,
         "inline" : true,

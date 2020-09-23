@@ -1,4 +1,4 @@
-(function() {
+var fxSimplex = function() {
     var commonjsGlobal = 'undefined' != typeof globalThis ? globalThis : 'undefined' != typeof window ? window : 'undefined' != typeof global ? global : 'undefined' != typeof self ? self : {};
     function createCommonjsModule(fn, basedir, module) {
         return module = {
@@ -35,7 +35,7 @@
     var NASHORN_BUG = getOwnPropertyDescriptor && !nativePropertyIsEnumerable.call({
         1: 2
     }, 1);
-    var f = NASHORN_BUG ? function(V) {
+    var f = NASHORN_BUG ? function propertyIsEnumerable(V) {
         var descriptor = getOwnPropertyDescriptor(this, V);
         return !!descriptor && descriptor.enumerable;
     } : nativePropertyIsEnumerable;
@@ -105,7 +105,7 @@
         }).a;
     }));
     var nativeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-    var f$1 = descriptors ? nativeGetOwnPropertyDescriptor : function(O, P) {
+    var f$1 = descriptors ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
         O = toIndexedObject(O);
         P = toPrimitive(P, true);
         if (ie8DomDefine) {
@@ -127,7 +127,7 @@
         return it;
     };
     var nativeDefineProperty = Object.defineProperty;
-    var f$2 = descriptors ? nativeDefineProperty : function(O, P, Attributes) {
+    var f$2 = descriptors ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
         anObject(O);
         P = toPrimitive(P, true);
         anObject(Attributes);
@@ -257,7 +257,7 @@
             } else {
                 simple ? O[key] = value : setGlobal(key, value);
             }
-        })(Function.prototype, 'toString', (function() {
+        })(Function.prototype, 'toString', (function toString() {
             return 'function' == typeof this && getInternalState(this).source || inspectSource(this);
         }));
     }));
@@ -326,7 +326,7 @@
     };
     var enumBugKeys = [ 'constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf' ];
     var hiddenKeys$1 = enumBugKeys.concat('length', 'prototype');
-    var f$3 = Object.getOwnPropertyNames || function(O) {
+    var f$3 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
         return objectKeysInternal(O, hiddenKeys$1);
     };
     var objectGetOwnPropertyNames = {
@@ -336,7 +336,7 @@
     var objectGetOwnPropertySymbols = {
         f: f$4
     };
-    var ownKeys = getBuiltIn('Reflect', 'ownKeys') || function(it) {
+    var ownKeys = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
         var keys = objectGetOwnPropertyNames.f(anObject(it));
         var getOwnPropertySymbols = objectGetOwnPropertySymbols.f;
         return getOwnPropertySymbols ? keys.concat(getOwnPropertySymbols(it)) : keys;
@@ -429,7 +429,7 @@
     var toObject = function(argument) {
         return Object(requireObjectCoercible(argument));
     };
-    var isArray = Array.isArray || function(arg) {
+    var isArray = Array.isArray || function isArray(arg) {
         return 'Array' == classofRaw(arg);
     };
     var nativeSymbol = !!Object.getOwnPropertySymbols && !fails((function() {
@@ -554,7 +554,7 @@
     var $forEach = arrayIteration.forEach;
     var STRICT_METHOD = arrayMethodIsStrict('forEach');
     var USES_TO_LENGTH = arrayMethodUsesToLength('forEach');
-    var arrayForEach = STRICT_METHOD && USES_TO_LENGTH ? [].forEach : function(callbackfn) {
+    var arrayForEach = STRICT_METHOD && USES_TO_LENGTH ? [].forEach : function forEach(callbackfn) {
         return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : void 0);
     };
     _export({
@@ -572,7 +572,7 @@
         proto: true,
         forced: !STRICT_METHOD$1 || !USES_TO_LENGTH$1
     }, {
-        some: function(callbackfn) {
+        some: function some(callbackfn) {
             return $some(this, callbackfn, arguments.length > 1 ? arguments[1] : void 0);
         }
     });
@@ -648,7 +648,7 @@
             var _d = false;
             var _e = void 0;
             try {
-                for (var _s, _i = arr[Symbol.iterator](); !(_n = (_s = _i.next()).done); _n = true) {
+                for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
                     _arr.push(_s.value);
                     if (i && _arr.length === i) {
                         break;
@@ -747,7 +747,7 @@
         proto: true,
         forced: FORCED
     }, {
-        concat: function(arg) {
+        concat: function concat(arg) {
             var O = toObject(this);
             var A = arraySpeciesCreate(O, 0);
             var n = 0;
@@ -786,7 +786,7 @@
         proto: true,
         forced: NEGATIVE_ZERO || !STRICT_METHOD$2 || !USES_TO_LENGTH$2
     }, {
-        indexOf: function(searchElement) {
+        indexOf: function indexOf(searchElement) {
             return NEGATIVE_ZERO ? nativeIndexOf.apply(this, arguments) || 0 : $indexOf(this, searchElement, arguments.length > 1 ? arguments[1] : void 0);
         }
     });
@@ -798,7 +798,7 @@
         proto: true,
         forced: ES3_STRINGS || !STRICT_METHOD$3
     }, {
-        join: function(separator) {
+        join: function join(separator) {
             return nativeJoin.call(toIndexedObject(this), void 0 === separator ? ',' : separator);
         }
     });
@@ -843,7 +843,7 @@
         proto: true,
         forced: !STRICT_METHOD$4 || !USES_TO_LENGTH$3
     }, {
-        reduce: function(callbackfn) {
+        reduce: function reduce(callbackfn) {
             return $reduce(this, callbackfn, arguments.length, arguments.length > 1 ? arguments[1] : void 0);
         }
     });
@@ -861,7 +861,7 @@
         proto: true,
         forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH$4
     }, {
-        slice: function(start, end) {
+        slice: function slice(start, end) {
             var O = toIndexedObject(this);
             var length = toLength(O.length);
             var k = toAbsoluteIndex(start, length);
@@ -895,7 +895,7 @@
         }
         return +value;
     };
-    var stringRepeat = ''.repeat || function(count) {
+    var stringRepeat = ''.repeat || function repeat(count) {
         var str = String(requireObjectCoercible(this));
         var result = '';
         var n = toInteger(count);
@@ -933,7 +933,7 @@
         proto: true,
         forced: FORCED$1
     }, {
-        toFixed: function(fractionDigits) {
+        toFixed: function toFixed(fractionDigits) {
             var number = thisNumberValue(this);
             var fractDigits = toInteger(fractionDigits);
             var data = [ 0, 0, 0, 0, 0, 0 ];
@@ -1034,7 +1034,7 @@
             setter.call(test, []);
             CORRECT_SETTER = test instanceof Array;
         } catch (error) {}
-        return function(O, proto) {
+        return function setPrototypeOf(O, proto) {
             anObject(O);
             aPossiblePrototype(proto);
             CORRECT_SETTER ? setter.call(O, proto) : O.__proto__ = proto;
@@ -1105,7 +1105,7 @@
         return NativeRegExp(re1) != re1 || NativeRegExp(re2) == re2 || '/a/i' != NativeRegExp(re1, 'i');
     })));
     if (FORCED$2) {
-        var RegExpWrapper = function(pattern, flags) {
+        var RegExpWrapper = function RegExp(pattern, flags) {
             var thisIsRegExp = this instanceof RegExpWrapper;
             var patternIsRegExp = isRegexp(pattern);
             var flagsAreUndefined = void 0 === flags;
@@ -1163,7 +1163,7 @@
     var UNSUPPORTED_Y$2 = regexpStickyHelpers.UNSUPPORTED_Y || regexpStickyHelpers.BROKEN_CARET;
     var NPCG_INCLUDED = void 0 !== /()??/.exec('')[1];
     var PATCH = UPDATES_LAST_INDEX_WRONG || NPCG_INCLUDED || UNSUPPORTED_Y$2;
-    PATCH && (patchedExec = function(str) {
+    PATCH && (patchedExec = function exec(str) {
         var re = this;
         var lastIndex, reCopy, match, i;
         var sticky = UNSUPPORTED_Y$2 && re.sticky;
@@ -1222,7 +1222,7 @@
         });
     }));
     var INCORRECT_NAME = nativeToString.name != TO_STRING;
-    (NOT_GENERIC || INCORRECT_NAME) && redefine(RegExp.prototype, TO_STRING, (function() {
+    (NOT_GENERIC || INCORRECT_NAME) && redefine(RegExp.prototype, TO_STRING, (function toString() {
         var R = anObject(this);
         var p = String(R.source);
         var rf = R.flags;
@@ -1350,7 +1350,7 @@
         return regexpExec.call(R, S);
     };
     fixRegexpWellKnownSymbolLogic('match', 1, (function(MATCH, nativeMatch, maybeCallNative) {
-        return [ function(regexp) {
+        return [ function match(regexp) {
             var O = requireObjectCoercible(this);
             var matcher = null == regexp ? void 0 : regexp[MATCH];
             return void 0 !== matcher ? matcher.call(regexp, O) : new RegExp(regexp)[MATCH](String(O));
@@ -1408,10 +1408,10 @@
         }));
         return pivotColumns.length > 0 ? pivotColumns[0] : null;
     }
-    var objectKeys = Object.keys || function(O) {
+    var objectKeys = Object.keys || function keys(O) {
         return objectKeysInternal(O, enumBugKeys);
     };
-    var objectDefineProperties = descriptors ? Object.defineProperties : function(O, Properties) {
+    var objectDefineProperties = descriptors ? Object.defineProperties : function defineProperties(O, Properties) {
         anObject(O);
         var keys = objectKeys(Properties);
         var length = keys.length;
@@ -1465,7 +1465,7 @@
         return NullProtoObject();
     };
     hiddenKeys[IE_PROTO] = true;
-    var objectCreate = Object.create || function(O, Properties) {
+    var objectCreate = Object.create || function create(O, Properties) {
         var result;
         if (null !== O) {
             EmptyConstructor[PROTOTYPE] = anObject(O);
@@ -1560,17 +1560,17 @@
             }
             switch (KIND) {
               case KEYS:
-                return function() {
+                return function keys() {
                     return new IteratorConstructor(this, KIND);
                 };
 
               case VALUES:
-                return function() {
+                return function values() {
                     return new IteratorConstructor(this, KIND);
                 };
 
               case ENTRIES:
-                return function() {
+                return function entries() {
                     return new IteratorConstructor(this, KIND);
                 };
             }
@@ -1594,7 +1594,7 @@
         }
         if (DEFAULT == VALUES && nativeIterator && nativeIterator.name !== VALUES) {
             INCORRECT_VALUES_NAME = true;
-            defaultIterator = function() {
+            defaultIterator = function values() {
                 return nativeIterator.call(this);
             };
         }
@@ -1665,7 +1665,7 @@
         proto: true,
         forced: !HAS_SPECIES_SUPPORT$1 || !USES_TO_LENGTH$5
     }, {
-        map: function(callbackfn) {
+        map: function map(callbackfn) {
             return $map(this, callbackfn, arguments.length > 1 ? arguments[1] : void 0);
         }
     });
@@ -1736,14 +1736,14 @@
         return +it;
     };
     if (isForced_1(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNumber('+0x1'))) {
-        var NumberWrapper = function(value) {
+        var NumberWrapper = function Number(value) {
             var it = arguments.length < 1 ? 0 : value;
             var dummy = this;
             return dummy instanceof NumberWrapper && (BROKEN_CLASSOF ? fails((function() {
                 NumberPrototype.valueOf.call(dummy);
             })) : classofRaw(dummy) != NUMBER) ? inheritIfRequired(new NativeNumber(toNumber(it)), dummy, NumberWrapper) : toNumber(it);
         };
-        for (var key, keys$2 = descriptors ? getOwnPropertyNames$1(NativeNumber) : 'MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger'.split(','), j = 0; keys$2.length > j; j++) {
+        for (var keys$2 = descriptors ? getOwnPropertyNames$1(NativeNumber) : 'MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger'.split(','), j = 0, key; keys$2.length > j; j++) {
             has(NativeNumber, key = keys$2[j]) && !has(NumberWrapper, key) && defineProperty$3(NumberWrapper, key, getOwnPropertyDescriptor$2(NativeNumber, key));
         }
         NumberWrapper.prototype = NumberPrototype;
@@ -1767,7 +1767,7 @@
         var O, tag, result;
         return void 0 === it ? 'Undefined' : null === it ? 'Null' : 'string' == typeof (tag = tryGet(O = Object(it), TO_STRING_TAG$2)) ? tag : CORRECT_ARGUMENTS ? classofRaw(O) : 'Object' == (result = classofRaw(O)) && 'function' == typeof O.callee ? 'Arguments' : result;
     };
-    var objectToString = toStringTagSupport ? {}.toString : function() {
+    var objectToString = toStringTagSupport ? {}.toString : function toString() {
         return '[object ' + classof(this) + ']';
     };
     toStringTagSupport || redefine(Object.prototype, 'toString', objectToString, {
@@ -1946,16 +1946,16 @@
         var exported = {};
         var fixMethod = function(KEY) {
             var nativeMethod = NativePrototype[KEY];
-            redefine(NativePrototype, KEY, 'add' == KEY ? function(value) {
+            redefine(NativePrototype, KEY, 'add' == KEY ? function add(value) {
                 nativeMethod.call(this, 0 === value ? 0 : value);
                 return this;
             } : 'delete' == KEY ? function(key) {
                 return !(IS_WEAK && !isObject(key)) && nativeMethod.call(this, 0 === key ? 0 : key);
-            } : 'get' == KEY ? function(key) {
+            } : 'get' == KEY ? function get(key) {
                 return IS_WEAK && !isObject(key) ? void 0 : nativeMethod.call(this, 0 === key ? 0 : key);
-            } : 'has' == KEY ? function(key) {
+            } : 'has' == KEY ? function has(key) {
                 return !(IS_WEAK && !isObject(key)) && nativeMethod.call(this, 0 === key ? 0 : key);
-            } : function(key, value) {
+            } : function set(key, value) {
                 nativeMethod.call(this, 0 === key ? 0 : key, value);
                 return this;
             });
@@ -2070,7 +2070,7 @@
                 }
             };
             redefineAll(C.prototype, {
-                clear: function() {
+                clear: function clear() {
                     var that = this;
                     var state = getInternalState(that);
                     var data = state.index;
@@ -2101,7 +2101,7 @@
                     }
                     return !!entry;
                 },
-                forEach: function(callbackfn) {
+                forEach: function forEach(callbackfn) {
                     var state = getInternalState(this);
                     var boundFunction = functionBindContext(callbackfn, arguments.length > 1 ? arguments[1] : void 0, 3);
                     var entry;
@@ -2112,20 +2112,20 @@
                         }
                     }
                 },
-                has: function(key) {
+                has: function has(key) {
                     return !!getEntry(this, key);
                 }
             });
             redefineAll(C.prototype, IS_MAP ? {
-                get: function(key) {
+                get: function get(key) {
                     var entry = getEntry(this, key);
                     return entry && entry.value;
                 },
-                set: function(key, value) {
+                set: function set(key, value) {
                     return define(this, 0 === key ? 0 : key, value);
                 }
             } : {
-                add: function(value) {
+                add: function add(value) {
                     return define(this, value = 0 === value ? 0 : value, value);
                 }
             });
@@ -2176,8 +2176,8 @@
             setSpecies(CONSTRUCTOR_NAME);
         }
     };
-    collection('Set', (function(init) {
-        return function() {
+    var es_set = collection('Set', (function(init) {
+        return function Set() {
             return init(this, arguments.length ? arguments[0] : void 0);
         };
     }), collectionStrong);
@@ -2191,7 +2191,7 @@
             string: String(iterated),
             index: 0
         });
-    }), (function() {
+    }), (function next() {
         var state = getInternalState$1(this);
         var string = state.string;
         var index = state.index;
@@ -2238,7 +2238,7 @@
         }
         return regExpBuiltinExec.call(R, S);
     };
-    var $RegExpStringIterator = createIteratorConstructor((function(regexp, string, global, fullUnicode) {
+    var $RegExpStringIterator = createIteratorConstructor((function RegExpStringIterator(regexp, string, global, fullUnicode) {
         setInternalState$4(this, {
             type: REGEXP_STRING_ITERATOR,
             regexp: regexp,
@@ -2247,7 +2247,7 @@
             unicode: fullUnicode,
             done: false
         });
-    }), REGEXP_STRING, (function() {
+    }), REGEXP_STRING, (function next() {
         var state = getInternalState$2(this);
         if (state.done) {
             return {
@@ -2296,7 +2296,7 @@
         proto: true,
         forced: WORKS_WITH_NON_GLOBAL_REGEX
     }, {
-        matchAll: function(regexp) {
+        matchAll: function matchAll(regexp) {
             var O = requireObjectCoercible(this);
             var flags, S, matcher, rx;
             if (null != regexp) {
@@ -2361,13 +2361,11 @@
         var modelEqualities = [];
         var objectiveRegex = /(max|min)(?:.*\s*)(\w)(?:\s*=) ((?:\s*[+-]?\s*\d*\.*\d*\w\d*)+)/i;
         var constraintRegex = /((?:\s*[+-]?\s*\d*\.*\d*\w\d*)+)\s*(=|<=|>=)\s*(\d+)/i;
-        var _objective$match = objective.match(objectiveRegex), _objective$match2 = _slicedToArray(_objective$match, 4), type = (_objective$match2[0], 
-        _objective$match2[1]), objectiveVariable = _objective$match2[2], objectiveEquation = _objective$match2[3];
+        var _objective$match = objective.match(objectiveRegex), _objective$match2 = _slicedToArray(_objective$match, 4), regexResult = _objective$match2[0], type = _objective$match2[1], objectiveVariable = _objective$match2[2], objectiveEquation = _objective$match2[3];
         type = type.toLowerCase();
         var _parseEquation = parseEquation(objectiveEquation), _parseEquation2 = _slicedToArray(_parseEquation, 2), objectiveCoeficients = _parseEquation2[0], objectiveVariables = _parseEquation2[1];
         constraints.forEach((function(d) {
-            var _d$match = d.match(constraintRegex), _d$match2 = _slicedToArray(_d$match, 4), equation = (_d$match2[0], 
-            _d$match2[1]), equality = _d$match2[2], constraint = _d$match2[3];
+            var _d$match = d.match(constraintRegex), _d$match2 = _slicedToArray(_d$match, 4), regexResult = _d$match2[0], equation = _d$match2[1], equality = _d$match2[2], constraint = _d$match2[3];
             modelConstraints.push(parseFloat(constraint));
             modelEqualities.push(equality);
             var _parseEquation3 = parseEquation(equation), _parseEquation4 = _slicedToArray(_parseEquation3, 2), constraintCoeficients = _parseEquation4[0], constraintVariables = _parseEquation4[1];
@@ -2387,8 +2385,7 @@
         var variables = [];
         var elements = _toConsumableArray(equation.matchAll(elementRegex));
         elements.forEach((function(element) {
-            var _element$0$match = element[0].match(coeficentRegex), _element$0$match2 = _slicedToArray(_element$0$match, 4), sign = (_element$0$match2[0], 
-            _element$0$match2[1]), coeficient = _element$0$match2[2], variable = _element$0$match2[3];
+            var _element$0$match = element[0].match(coeficentRegex), _element$0$match2 = _slicedToArray(_element$0$match, 4), regexResult = _element$0$match2[0], sign = _element$0$match2[1], coeficient = _element$0$match2[2], variable = _element$0$match2[3];
             coeficient = '' == coeficient ? 1 : coeficient;
             coeficients.push(parseFloat(sign + coeficient));
             variables.push(variable);
@@ -2466,7 +2463,7 @@
         proto: true,
         forced: !HAS_SPECIES_SUPPORT$2 || !USES_TO_LENGTH$6
     }, {
-        filter: function(callbackfn) {
+        filter: function filter(callbackfn) {
             return $filter(this, callbackfn, arguments.length > 1 ? arguments[1] : void 0);
         }
     });
@@ -2543,7 +2540,7 @@
         proto: true,
         forced: String(test$1) === String(test$1.reverse())
     }, {
-        reverse: function() {
+        reverse: function reverse() {
             isArray(this) && (this.length = this.length);
             return nativeReverse.call(this);
         }
@@ -2563,7 +2560,7 @@
         proto: true,
         forced: !HAS_SPECIES_SUPPORT$3 || !USES_TO_LENGTH$7
     }, {
-        splice: function(start, deleteCount) {
+        splice: function splice(start, deleteCount) {
             var O = toObject(this);
             var len = toLength(O.length);
             var actualStart = toAbsoluteIndex(start, len);
@@ -2667,10 +2664,10 @@
                 row.splice(column, 1);
             }));
         }));
-        basicVariables.reduce((function(a, b) {
+        var basicVariableCount = basicVariables.reduce((function(a, b) {
             return testVariable(b, [ 'a' ]) ? ++a : a;
         }), 0);
-        model.splice(lastRow, 1)[0];
+        var phaseOneObjective = model.splice(lastRow, 1)[0];
         columnsToRemove.forEach((function(column) {
             variables.splice(column, 1);
         }));
@@ -2787,4 +2784,5 @@
         }
         return buildSolution(tableau, basicVariables, nonBasicVariables, result);
     }
-})();
+    return simplex;
+}();

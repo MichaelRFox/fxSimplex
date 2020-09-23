@@ -52,7 +52,7 @@ function _iterableToArrayLimit(arr, i) {
         var _d = false;
         var _e = void 0;
         try {
-            for (var _s, _i = arr[Symbol.iterator](); !(_n = (_s = _i.next()).done); _n = true) {
+            for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
                 _arr.push(_s.value);
                 if (i && _arr.length === i) {
                     break;
@@ -90,13 +90,11 @@ export function parseModel(objective, constraints) {
     var modelEqualities = [];
     var objectiveRegex = /(max|min)(?:.*\s*)(\w)(?:\s*=) ((?:\s*[+-]?\s*\d*\.*\d*\w\d*)+)/i;
     var constraintRegex = /((?:\s*[+-]?\s*\d*\.*\d*\w\d*)+)\s*(=|<=|>=)\s*(\d+)/i;
-    var _objective$match = objective.match(objectiveRegex), _objective$match2 = _slicedToArray(_objective$match, 4), type = (_objective$match2[0], 
-    _objective$match2[1]), objectiveVariable = _objective$match2[2], objectiveEquation = _objective$match2[3];
+    var _objective$match = objective.match(objectiveRegex), _objective$match2 = _slicedToArray(_objective$match, 4), regexResult = _objective$match2[0], type = _objective$match2[1], objectiveVariable = _objective$match2[2], objectiveEquation = _objective$match2[3];
     type = type.toLowerCase();
     var _parseEquation = parseEquation(objectiveEquation), _parseEquation2 = _slicedToArray(_parseEquation, 2), objectiveCoeficients = _parseEquation2[0], objectiveVariables = _parseEquation2[1];
     constraints.forEach((function(d) {
-        var _d$match = d.match(constraintRegex), _d$match2 = _slicedToArray(_d$match, 4), equation = (_d$match2[0], 
-        _d$match2[1]), equality = _d$match2[2], constraint = _d$match2[3];
+        var _d$match = d.match(constraintRegex), _d$match2 = _slicedToArray(_d$match, 4), regexResult = _d$match2[0], equation = _d$match2[1], equality = _d$match2[2], constraint = _d$match2[3];
         modelConstraints.push(parseFloat(constraint));
         modelEqualities.push(equality);
         var _parseEquation3 = parseEquation(equation), _parseEquation4 = _slicedToArray(_parseEquation3, 2), constraintCoeficients = _parseEquation4[0], constraintVariables = _parseEquation4[1];
@@ -117,8 +115,7 @@ function parseEquation(equation) {
     var variables = [];
     var elements = _toConsumableArray(equation.matchAll(elementRegex));
     elements.forEach((function(element) {
-        var _element$0$match = element[0].match(coeficentRegex), _element$0$match2 = _slicedToArray(_element$0$match, 4), sign = (_element$0$match2[0], 
-        _element$0$match2[1]), coeficient = _element$0$match2[2], variable = _element$0$match2[3];
+        var _element$0$match = element[0].match(coeficentRegex), _element$0$match2 = _slicedToArray(_element$0$match, 4), regexResult = _element$0$match2[0], sign = _element$0$match2[1], coeficient = _element$0$match2[2], variable = _element$0$match2[3];
         coeficient = '' == coeficient ? 1 : coeficient;
         coeficients.push(parseFloat(sign + coeficient));
         variables.push(variable);

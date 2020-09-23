@@ -32,7 +32,7 @@ function _iterableToArrayLimit(arr, i) {
         var _d = false;
         var _e = void 0;
         try {
-            for (var _s, _i = arr[Symbol.iterator](); !(_n = (_s = _i.next()).done); _n = true) {
+            for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
                 _arr.push(_s.value);
                 if (i && _arr.length === i) {
                     break;
@@ -109,7 +109,7 @@ export function simplex(objective, constraints) {
     var result;
     model.forEach((function(row) {
         row[row.length - 1] < 0 && row.forEach((function(item) {
-            -1;
+            item *= -1;
         }));
     }));
     var _getVariables = getVariables(model, variables), basicVariables = _getVariables.basicVariables, nonBasicVariables = _getVariables.nonBasicVariables;

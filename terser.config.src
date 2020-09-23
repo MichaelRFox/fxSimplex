@@ -1,6 +1,6 @@
 {
     "parse": {
-        "bare_returns": false,
+        "bare_returns": true,
         "html5_comments": true,
         "shebang": true
     },
@@ -29,7 +29,7 @@
         "join_vars" : false,
         "keep_classnames" : true,
         "keep_fargs" : true,
-        "keep_fnames" : false,
+        "keep_fnames" : true,
         "keep_infinity" : false,
         "loops" : false,
         "module": true,
@@ -55,7 +55,7 @@
         "unsafe_proto" : false,
         "unsafe_regexp" : false,
         "unsafe_undefined" : false,
-        "unused" : true
+        "unused" : false
     },
     "mangle": false,
     "format": {

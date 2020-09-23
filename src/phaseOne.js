@@ -59,10 +59,10 @@ export function cleanPhaseOneTableau(model, objective, variables, basicVariables
             row.splice(column, 1);
         }));
     }));
-    basicVariables.reduce((function(a, b) {
+    var basicVariableCount = basicVariables.reduce((function(a, b) {
         return testVariable(b, [ 'a' ]) ? ++a : a;
     }), 0);
-    model.splice(lastRow, 1)[0];
+    var phaseOneObjective = model.splice(lastRow, 1)[0];
     columnsToRemove.forEach((function(column) {
         variables.splice(column, 1);
     }));

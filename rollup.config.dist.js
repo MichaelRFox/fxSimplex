@@ -6,7 +6,7 @@ export default {
   input: 'srcES6/index.js',
   output: {
     name: 'fxSimplex',
-    dir: 'dist',
+    file: './dist/fxSimplex.js',
     strict: true,
     format: 'iife'
   },
