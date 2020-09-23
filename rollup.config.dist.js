@@ -5,7 +5,7 @@ import babel from '@rollup/plugin-babel';
 export default {
   input: 'srcES6/index.js',
   output: {
-    name: 'index',
+    name: 'fxSimplex',
     dir: 'dist',
     strict: true,
     format: 'iife'

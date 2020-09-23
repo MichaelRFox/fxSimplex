@@ -38,7 +38,7 @@ function phaseTwo (model, variables, basicVariables, nonBasicVariables, type) {
 export function simplex (objective, constraints) {
     
     let [model, variables, type] = parseModel (objective, constraints);
-    if (model.length == 0) return;
+    if (model.length == 0) return {solution: [], result: ''};;
 
     let tableau;
     let result;

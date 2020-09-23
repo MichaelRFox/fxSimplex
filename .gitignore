@@ -5,5 +5,7 @@ node_modules
 fxSimplex.sublime-project
 fxSimplex.sublime-workspace
 
+*.*OLD
+
 .DS_Store
 dist/.DS_Store

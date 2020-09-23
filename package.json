@@ -1,20 +1,35 @@
 {
   "name": "fxsimplex",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A javascript implementation of one and two-phase simplex algorithims",
   "main": "index.js",
   "scripts": {
     "test": "babel-tape-runner ./test/**/*.js  | tap-spec",
-    "buildSrc": "npm run rollupSrc && npm run minifyjsSrc",
-    "buildDist": "npm run rollupDist && npm run minifyJs",
+    "buildSrc": "npm run babelSrc && npm run terserSrc",
+    "buildDist": "npm run rollupDist && npm run terserDistMain && npm run terserDist",
     "rollupDist": "rollup -c rollup.config.dist.js",
-    "rollupSrc": "rollup -c rollup.config.src.js",
-    "minifyJs": "terser ./dist/index.js -o ./dist/index.min.js --config-file .uglifyjsrc",
-    "minifyjsSrc": "terser ./src/index.js -o ./src/index.js --config-file .uglifyjsSrcrc"
+    "babelSrc": "babel --no-babelrc srcES6 --out-dir src --config-file ./.babelrcSRC",
+    "terserSrc": "npm run tIndex && npm run tMatrix && npm run tModel && npm run tPhaseOne && npm run tPivot && npm run tSimplex && npm run tUtilities && npm run tVariables",
+    "tIndex": "terser ./src/index.js -o ./src/index.js --config-file terser.config.src",
+    "tMatrix": "terser ./src/matrix.js -o ./src/matrix.js --config-file terser.config.src",
+    "tModel": "terser ./src/model.js -o ./src/model.js --config-file terser.config.src",
+    "tPhaseOne": "terser ./src/phaseOne.js -o ./src/phaseOne.js --config-file terser.config.src",
+    "tPivot": "terser ./src/pivot.js -o ./src/pivot.js --config-file terser.config.src",
+    "tSimplex": "terser ./src/simplex.js -o ./src/simplex.js --config-file terser.config.src",
+    "tUtilities": "terser ./src/utilities.js -o ./src/utilities.js --config-file terser.config.src",
+    "tVariables": "terser ./src/variables.js -o ./src/variables.js --config-file terser.config.src",
+    "terserDist": "terser ./dist/index.js -o ./dist/index.min.js --config-file terser.config.dist",
+    "terserDistMain": "terser ./dist/index.js -o ./dist/index.js --config-file terser.config.src",
+    "minifyJsOLD": "terser ./dist/index.js -o ./dist/index.min.js --config-file .uglifyjsrc",
+    "minifyjsSrcOLD": "terser ./src/index.js -o ./src/index.js --config-file .uglifyjsSrcrc",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/MichaelRFox/fxSimplex"
+  },
+  "publishConfig": {
+    "registry": "https://npm.fxsimplex.github.com/"
   },
   "keywords": [
     "simplex",

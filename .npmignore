@@ -1,3 +1,13 @@
 test
 node_modules
-tap-spec
+.babelrc
+.babelrcSRC
+.browserslist
+.gitignore
+.npmignore
+rollup.config.dist
+terser.config.*
+*.*OLD
+fxSimplex.sublime-project
+fxSimplex.sublime-workspace
+package-lock.json

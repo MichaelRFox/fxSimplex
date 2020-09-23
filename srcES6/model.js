@@ -1,5 +1,6 @@
 export function parseModel (objective, constraints) {
 
+    if (objective == '' | constraints.length == 0) return [[], '', ''];
     let modelVariables = [];
     let modelCoeficients = [];
     let modelConstraints = [];
