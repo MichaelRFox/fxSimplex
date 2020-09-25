@@ -16,3 +16,7 @@
 ## v1.1.2 - 25 Sept 2020
 
 - Changed export declaration in index.js
+
+## v1.1.3 - 25 Sept 2020
+
+- Added module definition in index.js - support for node resolution algorithm
