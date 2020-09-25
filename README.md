@@ -10,9 +10,7 @@ To install, issue the following command:
 
 ## Usage
 
-Using ES6 syntax: `import {default as simplex} from 'fxsimplex';`
-
-Or using node syntax: `var fxSimplex = require(fxsimplex.js);`
+Using ES6 syntax: `import {simplex} from 'fxsimplex';`
 
 Note that source files are in two folders: *srcES6/* for the ES6 compatible source files, and *src/*, which contains transpiled ES modules. The *dist/* folder contains both minified and unminified versions in iife format.
 
@@ -31,7 +29,7 @@ fxSimplex exposes only one method: `simplex()` which takes two arguments, an obj
 ### Example
 
 ```javascript
-import {default as simplex} from 'fxsimplex';
+import {simplex} from 'fxsimplex';
 
     let objective = 'Maximize Z = 3x + 2y';
     let constraints = ['2x + y <= 18',

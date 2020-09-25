@@ -1,11 +1,11 @@
 {
-    "presets": [
-        ["@babel/preset-env", {
-            "useBuiltIns": "entry",
-            "corejs": 3.6,
-            "modules": false,
-            "debug": false
-        }]
-    ],
-    "retainLines": true
+  "presets": [
+    ["@babel/preset-env", {
+      "useBuiltIns": "entry",
+      "corejs": 3.6,
+      "modules": false,
+      "debug": false
+    }]
+  ],
+  "retainLines": true
 }

@@ -12,3 +12,7 @@
 
 - Cleaned up .npmignore
 - Changed output file names in dist folder to fxSimplex.js and fxSimplex.min.js
+
+## v1.1.2 - 25 Sept 2020
+
+- Changed export declaration in index.js
