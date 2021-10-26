@@ -1,5 +1,5 @@
 import test from 'tape';
-import {simplex} from '../../srcES6/simplex.js';
+import {simplex} from '../../src/simplex.js';
 
 test('Phase One maximize test - 1', function(t) {
     

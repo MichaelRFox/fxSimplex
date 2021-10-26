@@ -1,5 +1,5 @@
 import test from 'tape';
-import {simplex} from '../../srcES6/simplex.js';
+import {simplex} from '../../src/simplex.js';
 
 test('Degenerate test - artificial variable removal', function(t) {
 //https://cbom.atozmath.com/example/CBOM/Simplex.aspx?he=e&q=sm&ex=5
@@ -11,6 +11,21 @@ test('Degenerate test - artificial variable removal', function(t) {
 
     var expectedOutput = {
         solution: [['s0', 0], ["x2", 25], ["x1", 20], ["x3", 15],["Z", 30750]],
+        result: 'solved'};
+    var actual = simplex(objective, constraints);
+    t.deepEqual(actual, expectedOutput);
+    t.end();
+});
+
+
+test('Degenerate test - artificial variable removal v 2', function(t) {
+//http://myweb.usf.edu/~molla/2016_spring_math482/two_phase_pres-3up.pdf
+    var objective = 'Minimize Z = x1 - x2 - x3';
+    var constraints =  ['2x1 + 4x2 + 4x3 = 4',
+                        '3x1 - x2 - 2x3 = 6'];
+
+    var expectedOutput = {
+        solution: [['x2', 0], ['x1', 2], ['Z', 2]],
         result: 'solved'};
     var actual = simplex(objective, constraints);
     t.deepEqual(actual, expectedOutput);
@@ -38,7 +53,6 @@ test('Degenerate test - multiple optimal solution', function(t) {
                         '3x1 + 2x2 <= 24',
                         'x1 + x2 >= 3'];
 
-    //var expectedOutput = [["x1", 2.4], ["x2", 8.4], ["Z", 48]];
     var expected = {
         solution: [['s0', 14], ['e0', 5], ['x1', 8], ['Z', 48]],
         result: 'multiple solutions'};

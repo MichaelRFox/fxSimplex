@@ -1,0 +1,38 @@
+{
+    "plugins": ["plugins/markdown"],
+    "recurseDepth": 10,
+    "source": {
+        "include": ["src"],
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "sourceType": "module",
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    },
+    "opts": {
+        "template": "node_modules/docdash",
+        "encoding": "utf-8",
+        "destination": "../github.io/docs",
+        "recurse": true,
+        "verbose": true
+    },
+    "docdash": {
+        "sort": false,
+        "search": true,
+        "collapse": true,
+        "menu": {
+            "Source Code": {
+                "href":"https://github.com/MichaelRFox/fxSimplex",
+                "target":"_blank",
+                "class":"menu-item",
+                "id":"source_link"                
+            }
+        }
+    }
+}

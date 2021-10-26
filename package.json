@@ -1,59 +1,60 @@
 {
   "name": "fxsimplex",
-  "version": "1.1.3",
+  "version": "2.0.0",
   "description": "A javascript implementation of one and two-phase simplex algorithims",
-  "main": "dist/fxSimplex.js",
-  "module": "src/index.js",
-  "scripts": {
-    "test": "babel-tape-runner ./test/**/*.js  | tap-spec",
-    "buildSrc": "npm run babelSrc && npm run terserSrc",
-    "buildDist": "npm run rollupDist &&  npm run terserDistMain && npm run terserDist",
-    "rollupDist": "rollup -c rollup.config.dist.js",
-    "babelSrc": "babel --no-babelrc srcES6 --out-dir src --config-file ./.babelrcSRC",
-    "terserSrc": "npm run tIndex && npm run tMatrix && npm run tModel && npm run tPhaseOne && npm run tPivot && npm run tSimplex && npm run tUtilities && npm run tVariables",
-    "tIndex": "terser ./src/index.js -o ./src/index.js --config-file terser.config.src",
-    "tMatrix": "terser ./src/matrix.js -o ./src/matrix.js --config-file terser.config.src",
-    "tModel": "terser ./src/model.js -o ./src/model.js --config-file terser.config.src",
-    "tPhaseOne": "terser ./src/phaseOne.js -o ./src/phaseOne.js --config-file terser.config.src",
-    "tPivot": "terser ./src/pivot.js -o ./src/pivot.js --config-file terser.config.src",
-    "tSimplex": "terser ./src/simplex.js -o ./src/simplex.js --config-file terser.config.src",
-    "tUtilities": "terser ./src/utilities.js -o ./src/utilities.js --config-file terser.config.src",
-    "tVariables": "terser ./src/variables.js -o ./src/variables.js --config-file terser.config.src",
-    "terserDist": "terser ./dist/fxSimplex.js -o ./dist/fxSimplex.min.js --config-file terser.config.dist",
-    "terserDistMain": "terser ./dist/fxSimplex.js -o ./dist/fxSimplex.js --config-file terser.config.src",
-    "minifyJsOLD": "terser ./dist/index.js -o ./dist/index.min.js --config-file .uglifyjsrc",
-    "minifyjsSrcOLD": "terser ./src/index.js -o ./src/index.js --config-file .uglifyjsSrcrc",
-    "postversion": "git push && git push --tags"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/MichaelRFox/fxSimplex"
-  },
   "keywords": [
     "simplex",
     "optimization",
     "javascript"
   ],
-  "author": "Michael R. Fox",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/MichaelRFox/fxSimplex/issues"
-  },
   "homepage": "https://github.com/MichaelRFox/fxSimplex#readme",
+  "bugs": {
+    "url": "https://github.com/MichaelRFox/fxSimplex/issues",
+    "email": "fox.michael.r@gmail.com"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Michael R. Fox, Ph.D.",
+    "email": "fox.michael.r@gmail.com"
+  },
+  "main": "dist/fxSimplex.js",
+  "module": "src/index.js",
+  "directories": {
+    "test": "test",
+    "dist": "dist",
+    "src": "src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MichaelRFox/fxSimplex"
+  },
+  "scripts": {
+    "test": "babel-tape-runner ./test/**/*.js",
+    "build": "npm run rollup && fxstripjsdoc ./dist/fxSimplex.js && npm run terser",
+    "rollup": "rollup -c rollup.config.js",
+    "terser": "terser ./dist/fxSimplex.js -o ./dist/fxSimplex.min.js --config-file terser.config.json",
+    "docTest": "jsdoc -P package.json -c jsDocConfig.json",
+    "docs": "jsdoc -P package.json -c jsDocConfig.json && git -C ../github.io add -A && git -C ../github.io commit -m \"updated fxSimplex docs\" && git -C ../github.io push",
+    "preversion": "npm run build && git add -A",
+    "postversion": "npm run docs && git push && git push --tags && npm publish"
+  },
   "dependencies": {},
   "devDependencies": {
-    "@babel/cli": "^7.11.6",
-    "@babel/core": "^7.11.6",
-    "@babel/node": "^7.10.5",
-    "@babel/preset-env": "^7.11.5",
-    "@rollup/plugin-babel": "^5.2.0",
-    "@rollup/plugin-commonjs": "^15.0.0",
-    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/node": "^7.15.8",
+    "@babel/preset-env": "^7.15.8",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
     "babel-tape-runner": "^3.0.0",
-    "core-js": "^3.6.5",
-    "rollup": "^2.26.11",
-    "tap-spec": "^5.0.0",
-    "tape": "^5.0.1",
-    "terser": "^5.3.0"
+    "browserslist": "^4.17.5",
+    "core-js": "^3.19.0",
+    "docdash": "^1.2.0",
+    "fxstripjsdoc": "^1.1.0",
+    "jsdoc": "^3.6.7",
+    "rollup": "^2.58.3",
+    "tape": "^5.3.1",
+    "terser": "^5.9.0"
   }
 }

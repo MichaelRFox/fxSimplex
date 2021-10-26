@@ -1,5 +1,5 @@
 import test from 'tape';
-import {getPivot} from '../../srcES6/pivot.js';
+import {getPivot} from '../../src/pivot.js';
 
 test('getPivot test - Blands rule', function(t) {
 

@@ -1,147 +1,111 @@
-function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
-}
+/**
+ * @module simplex
+ * @desc The simplex module provides the entry point for fxSimplex. 
+ */
 
-function _nonIterableRest() {
-    throw new TypeError('Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.');
-}
+import {trim, testVariable} from './utilities';
+import {parseModel} from './model';
+import {getPivot, pivotModel} from './pivot';
+import {buildPhaseTwoTableau, cleanPhaseTwoTableau} from './phaseTwo';
+import {getVariables, swapVariables} from './variables';
 
-function _unsupportedIterableToArray(o, minLen) {
-    if (o) {
-        if ('string' == typeof o) {
-            return _arrayLikeToArray(o, minLen);
-        }
-        var n = Object.prototype.toString.call(o).slice(8, -1);
-        'Object' === n && o.constructor && (n = o.constructor.name);
-        return 'Map' === n || 'Set' === n ? Array.from(o) : 'Arguments' === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? _arrayLikeToArray(o, minLen) : void 0;
-    }
-}
+/**
+ * @function buildSolution
+ * @desc Formats the final solution for return back to the [simplex function]{@link module:simplex~simplex}.
+ * @param {Array} model A two-dimensional array of numbers representing the
+ * current simplex tableau.
+ * @param {Array} basicVariables An array of strings representing the basic variables of the tableau.
+ * @param {Array} nonBasicVariables An array of strings representing the non-basic variables of the tableau.
+ * @param {string} result The result of the final tableau pivot. One of ['solved', 'multiple solutions', 'unbounded']
+ * @returns {Object} Key-value pairs representing the solution (a two-dimensional array of variable (string)
+ * and coefficient (number) pairs), and the result (string).
+ */
+function buildSolution (model, basicVariables, nonBasicVariables, result) {
 
-function _arrayLikeToArray(arr, len) {
-    (null == len || len > arr.length) && (len = arr.length);
-    for (var i = 0, arr2 = new Array(len); i < len; i++) {
-        arr2[i] = arr[i];
-    }
-    return arr2;
-}
+    let solution = [];
+    let lastColumn = model[0].length - 1;
 
-function _iterableToArrayLimit(arr, i) {
-    if ('undefined' != typeof Symbol && Symbol.iterator in Object(arr)) {
-        var _arr = [];
-        var _n = true;
-        var _d = false;
-        var _e = void 0;
-        try {
-            for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-                _arr.push(_s.value);
-                if (i && _arr.length === i) {
-                    break;
-                }
-            }
-        } catch (err) {
-            _d = true;
-            _e = err;
-        } finally {
-            try {
-                _n || null == _i['return'] || _i['return']();
-            } finally {
-                if (_d) {
-                    throw _e;
-                }
-            }
-        }
-        return _arr;
-    }
-}
-
-function _arrayWithHoles(arr) {
-    if (Array.isArray(arr)) {
-        return arr;
-    }
-}
-
-import { trim } from './utilities.js';
-
-import { parseModel } from './model.js';
-
-import { getPivot, pivotModel } from './pivot.js';
-
-import { buildPhaseOneTableau, cleanPhaseOneTableau } from './phaseOne.js';
-
-import { getVariables, swapVariables } from './variables.js';
-
-function buildSolution(model, basicVariables, nonBasicVariables, result) {
-    var solution = [];
-    var lastColumn = model[0].length - 1;
-    for (var i = 0; i < basicVariables.length; i++) {
-        solution.push([ basicVariables[i], trim(model[i][lastColumn]) ]);
-    }
-    return {
-        solution: solution,
-        result: result
+    for (let i = 0; i < basicVariables.length; i++) {
+        solution.push ([basicVariables[i], trim(model[i][lastColumn])]);
     };
+
+    return {solution: solution, result: result};
+
 }
 
-function phaseTwo(model, variables, basicVariables, nonBasicVariables, type) {
-    var pivot;
+/**
+ * @function executeSimplex
+ * @desc Iteratively executes the simplex method for either one-phase or two-phase models until a solution
+ * is found or the model is determined to be unbounded.
+ * @param {Array} model A two-dimensional array of numbers representing the
+ * current simplex tableau.
+ * @param {Array} basicVariables An array of strings representing the basic variables of the tableau.
+ * @param {Array} nonBasicVariables An array of strings representing the non-basic variables of the tableau.
+ * @param {string} type The type of optimization ['min' | 'max'].
+ * @returns {Array} An array containing the final tableau (two-dimensional array of numbers) and and object
+ * containing key-value pairs representing the final pivot row and column indices. 
+ */
+function executeSimplex (model, variables, basicVariables, nonBasicVariables, type) {
+
+    let pivot;
+
     while (true) {
         pivot = getPivot(model, variables, basicVariables, nonBasicVariables, type);
         switch (pivot) {
-          case 'solved':
-          case 'multiple solutions':
-          case 'unbounded':
-            return [ model, pivot ];
-        }
-        model = pivotModel(model, pivot, type);
-        swapVariables(pivot, variables, basicVariables, nonBasicVariables);
-    }
-}
-
-export function simplex(objective, constraints) {
-    var _parseModel = parseModel(objective, constraints), _parseModel2 = _slicedToArray(_parseModel, 3), model = _parseModel2[0], variables = _parseModel2[1], type = _parseModel2[2];
-    if (0 == model.length) {
-        return {
-            solution: [],
-            result: ''
+            case 'solved':
+            case 'multiple solutions':
+            case 'unbounded':
+                return [model, pivot];
         };
-    }
-    var tableau;
-    var result;
-    model.forEach((function(row) {
-        row[row.length - 1] < 0 && row.forEach((function(item) {
-            item *= -1;
-        }));
-    }));
-    var _getVariables = getVariables(model, variables), basicVariables = _getVariables.basicVariables, nonBasicVariables = _getVariables.nonBasicVariables;
-    var isTwoPhase = variables.some((function(variable) {
-        return 'a' == variable.charAt(0);
-    }));
+        model = pivotModel(model, pivot, type);
+
+        ({basicVariables, nonBasicVariables} = swapVariables(pivot, variables, basicVariables, nonBasicVariables));
+    };
+};
+
+/**
+ * @function simplex
+ * @desc The simplex function is the entry point for fxSimplex and is the only object exposed by the library.
+ * @param {string} objective The objective function in the form of  *'Maximize Z = 1x + 5y'*.
+ * @parm {Array} constraints A two-dimensional array of strings detailing the constraints
+ * in the form of *['x + y <= 4', '2x - y <= 7', ...]*.
+ * @returns {Object} An object with the solution (an array of key value pairs for the basic variables and their
+ * coefficients in the form of *[['y', 10],['x', 10], ['Z', 20],...]*) and a result: a string in the form of
+ * *['solved' | 'infeasible' | 'unbounded' | 'multiple solutions']*. If the optimization is successful, the result
+ * will be either *solved* or *multiple solutions*, and the solution will contain optimal coefficients. If the
+ * result returns *infeasible* or *unbounded*, the optimization has failed and the coefficients returned in the
+ * solution will reflect the final tableau reached and not be optimal.
+ */
+export function simplex (objective, constraints) {
+    
+    let [model, variables, type] = parseModel (objective, constraints);
+    if (model.length == 0) return {solution: [], result: ''};
+
+    let tableau;
+    let result;
+
+    model.forEach(row => { /* ensure rhs is positive */
+        if (row[row.length - 1] < 0) {
+            row.forEach(item => {item *= -1});
+        };
+    });
+
+    let {basicVariables, nonBasicVariables} = getVariables(model, variables);
+    let isTwoPhase = variables.some (variable => {return testVariable(variable, ['a'])});
+
     if (isTwoPhase) {
-        var originalObjective = model.pop();
-        tableau = buildPhaseOneTableau(model, variables);
-        var _phaseTwo = phaseTwo(tableau, variables, basicVariables, nonBasicVariables, 'min');
-        var _phaseTwo2 = _slicedToArray(_phaseTwo, 2);
-        tableau = _phaseTwo2[0];
-        result = _phaseTwo2[1];
-        if ('unbounded' == result) {
-            return buildSolution(tableau, basicVariables, nonBasicVariables, result);
-        }
-        var _cleanPhaseOneTableau = cleanPhaseOneTableau(tableau, originalObjective, variables, basicVariables, nonBasicVariables);
-        var _cleanPhaseOneTableau2 = _slicedToArray(_cleanPhaseOneTableau, 2);
-        tableau = _cleanPhaseOneTableau2[0];
-        result = _cleanPhaseOneTableau2[1];
-        if ('infeasible' == result) {
-            return buildSolution(tableau, basicVariables, nonBasicVariables, result);
-        }
-        var _phaseTwo3 = phaseTwo(tableau, variables, basicVariables, nonBasicVariables, type);
-        var _phaseTwo4 = _slicedToArray(_phaseTwo3, 2);
-        tableau = _phaseTwo4[0];
-        result = _phaseTwo4[1];
+        let originalObjective = model.pop(); /* ignore the original objective function for now */
+        tableau = buildPhaseTwoTableau (model, variables);
+        [tableau, result] = executeSimplex (tableau, variables, basicVariables, nonBasicVariables, 'min');
+        if (result == 'unbounded') return buildSolution(tableau, basicVariables, nonBasicVariables, result);
+        [tableau, result] = cleanPhaseTwoTableau(tableau, originalObjective, variables, basicVariables, nonBasicVariables);
+        if (result == 'infeasible') return buildSolution(tableau, basicVariables, nonBasicVariables, result);
+        [tableau, result] = executeSimplex (tableau, variables, basicVariables, nonBasicVariables, type);
     } else {
-        var _phaseTwo5 = phaseTwo(model, variables, basicVariables, nonBasicVariables, type);
-        var _phaseTwo6 = _slicedToArray(_phaseTwo5, 2);
-        tableau = _phaseTwo6[0];
-        result = _phaseTwo6[1];
-    }
-    return buildSolution(tableau, basicVariables, nonBasicVariables, result);
+        [tableau, result] = executeSimplex (model, variables, basicVariables, nonBasicVariables, type);
+
+    };
+    
+    return buildSolution(tableau, basicVariables, nonBasicVariables, result);        
+
 }

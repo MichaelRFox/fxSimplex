@@ -1,5 +1,5 @@
 import test from 'tape';
-import {multipleSolutionTest, trim, testVariable} from '../../srcES6/utilities.js';
+import {multipleSolutionTest, trim, testVariable} from '../../src/utilities.js';
 
 test('Multiple solution test v1', function(t) {
 
@@ -12,7 +12,8 @@ test('Multiple solution test v1', function(t) {
     var basicVariables = ['x2', 's1', 'Z'];
     var nonBasicVariables = ['x1', 's0'];
 
-    var expected = 0;
+    // var expected = 0;
+    var expected = true;
     var actual = multipleSolutionTest (model, variables, basicVariables, nonBasicVariables);
     t.deepEqual(actual, expected);
     t.end();
@@ -29,7 +30,8 @@ test('Multiple solution test v2', function(t) {
     var basicVariables = ['x2', 's1', 'Z'];
     var nonBasicVariables = ['x1', 's0'];
 
-    var expected = null;
+    var expected = false;
+    // var expected = null;
     var actual = multipleSolutionTest (model, variables, basicVariables, nonBasicVariables);
     t.deepEqual(actual, expected);
     t.end();

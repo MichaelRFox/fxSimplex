@@ -1,5 +1,5 @@
 import test from 'tape';
-import {getRow, getColumn} from '../../srcES6/matrix.js';
+import {getRow, getColumn} from '../../src/matrix.js';
 //var index = require('../../src/matrix.js');
 
 test('Matrix test - getRow', function(t) {

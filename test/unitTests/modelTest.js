@@ -1,5 +1,5 @@
 import test from 'tape';
-import {parseModel} from '../../srcES6/model.js';
+import {parseModel} from '../../src/model.js';
 
 test('Model test - two phase', function(t) {
 
@@ -32,6 +32,32 @@ test('Model test - one phase minimize', function(t) {
                             [2, -1, 0, 0, 0]],
                             ['x', 'y', 's0', 's1', 'C'],
                             'min'];
+
+    var actual = parseModel(objective, constraints);
+    t.deepEqual(actual, expectedOutput);
+    t.end();
+});
+
+test('Model test - bad objective', function(t) {
+
+    var objective = 'Minimize C < -2x + y';
+    var constraints =  ['x + 2y <= 6',
+                        '3x + 2y <= 12'];
+
+    var expectedOutput = [[], '', ''];
+
+    var actual = parseModel(objective, constraints);
+    t.deepEqual(actual, expectedOutput);
+    t.end();
+});
+
+test('Model test - reserved variables', function(t) {
+
+    var objective = 'Minimize C = -2x + y';
+    var constraints =  ['a + 2e + x1 <= 6',
+                        '3a + 2e + 5x1 <= 12'];
+
+    var expectedOutput = [[], '', ''];
 
     var actual = parseModel(objective, constraints);
     t.deepEqual(actual, expectedOutput);

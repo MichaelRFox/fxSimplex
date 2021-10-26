@@ -1,5 +1,5 @@
 import test from 'tape';
-import {simplex} from '../../srcES6/simplex.js';
+import {simplex} from '../../src/simplex.js';
 
 test('Two-phase test - minimization v1', function(t) {
     
@@ -50,6 +50,22 @@ test('Two-phase test - maximization v2', function(t) {
 
 });
 
+test('Two-phase test - maximization v3', function(t) {
+
+    var objective = 'Maximize Z = 2x1 + 3x2 + x3'
+    var constraints =   ['x1 + x2 + x3 <= 40',
+                         '2x1 + x2 - x3 >= 10',
+                         '-x2 + x3 >= 10'];
+
+    var expected = {
+        solution: [["x2", 10],["x1", 10], ['x3', 20], ["Z", 70]],
+        result: 'solved'};
+    var actual = simplex(objective, constraints);
+    t.deepEqual(actual, expected);
+    t.end();
+
+});
+
 test('Two-phase test - minimization v2', function(t) {
 //https://cbom.atozmath.com/example/CBOM/Simplex.aspx?he=e&q=tp
     var objective = 'Minimize Z = x1 + x2'
@@ -79,3 +95,36 @@ test('Two-phase test - minimization v3', function(t) {
     t.end();
 
 });
+
+test('Two-phase test - maximization v4', function(t) {
+//http://www.maths.qmul.ac.uk/~ffischer/teaching/opt/notes/notes8.pdf
+    var objective = 'Maximize Z= 2x1 + 3x2 + 4x3'
+    var constraints =   ['3x1 + 2x2 + x3 <= 10',
+                         '2x1 + 3x2 + 3x3 <= 15',
+                         'x1 + x2 - x3 >= 4'];
+
+    var expected = {
+        solution: [['x1', 0.3333333], ['x3', 0.5555556], ['x2', 4.2222222], ['Z', 15.5555556]],
+        result: 'solved'};
+    var actual = simplex(objective, constraints);
+    t.deepEqual(actual, expected);
+    t.end();
+
+});
+
+test('Two-phase test - minimization v5', function(t) {
+//http://www.maths.qmul.ac.uk/~ffischer/teaching/opt/notes/notes8.pdf
+    var objective = 'Minimize Z = 6x1 + 3x2'
+    var constraints =   ['x1 + x2 >= 1',
+                         '2x1 - x2 >= 1',
+                         '3x2 <= 2'];
+
+    var expected = {
+        solution: [[ 'x2', 0.3333333], ['x1', 0.6666667], ['s0', 1], ['Z', 5]],
+        result: 'solved'};
+    var actual = simplex(objective, constraints);
+    t.deepEqual(actual, expected);
+    t.end();
+
+});
+

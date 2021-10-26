@@ -1,188 +1,157 @@
-function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
-}
+/**
+ * @module model
+ * @desc Provides functions to parse the input objective and constraints and build a tableau for processing.
+ */
 
-function _nonIterableSpread() {
-    throw new TypeError('Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.');
-}
+import {testRegex} from './utilities';
 
-function _iterableToArray(iter) {
-    if ('undefined' != typeof Symbol && Symbol.iterator in Object(iter)) {
-        return Array.from(iter);
-    }
-}
+ /**
+  * @function  parseModel
+  * @desc Parses the objective function and the array of constraints into a tableau suitable for processing.
+  * @param {string} objective The objective function in the form of  *'Maximize Z = 1x + 5y'*.
+  * @param {Array} constraints A two-dimensional array of strings detailing the constraints in the form
+  * of *['x + y <= 4', '2x - y <= 7', ...]*.
+  * @returns {Array} An array containing the model in the form of a tableau (an n x m array of coefficients),
+  * the variable names (an array of strings), and the type (string) ['max' | 'min'].
+  */
+export function parseModel (objective, constraints) {
 
-function _arrayWithoutHoles(arr) {
-    if (Array.isArray(arr)) {
-        return _arrayLikeToArray(arr);
-    }
-}
+    if (objective == '' | constraints.length == 0) return [[], '', ''];
+    let modelVariables = [];
+    let modelCoeficients = [];
+    let modelConstraints = [];
+    let modelEqualities = [];
 
-function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
-}
+    /** group 1 = max or min; group 2 = Z; group 3 = equation */
+    const objectiveRegex = /(max|min)(?:.*\s*)(\w)(?:\s*=) ((?:\s*[+-]?\s*\d*\.*\d*\w\d*)+)/i;
 
-function _nonIterableRest() {
-    throw new TypeError('Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.');
-}
+    /** group 1 = elements; group 2 = equality; group 3 = constraint */
+    const constraintRegex = /((?:\s*[+-]?\s*\d*\.*\d*\w\d*)+)\s*(=|<=|>=)\s*(\d+)/i;
 
-function _unsupportedIterableToArray(o, minLen) {
-    if (o) {
-        if ('string' == typeof o) {
-            return _arrayLikeToArray(o, minLen);
-        }
-        var n = Object.prototype.toString.call(o).slice(8, -1);
-        'Object' === n && o.constructor && (n = o.constructor.name);
-        return 'Map' === n || 'Set' === n ? Array.from(o) : 'Arguments' === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? _arrayLikeToArray(o, minLen) : void 0;
-    }
-}
+    if (testRegex(objective, objectiveRegex, 'objective') == false) return [[], '', ''];
+    let constraintTest = constraints.every (x => testRegex(x, constraintRegex, 'constraint'));
+    if (constraintTest == false) {return [[], '', '']};
 
-function _arrayLikeToArray(arr, len) {
-    (null == len || len > arr.length) && (len = arr.length);
-    for (var i = 0, arr2 = new Array(len); i < len; i++) {
-        arr2[i] = arr[i];
-    }
-    return arr2;
-}
-
-function _iterableToArrayLimit(arr, i) {
-    if ('undefined' != typeof Symbol && Symbol.iterator in Object(arr)) {
-        var _arr = [];
-        var _n = true;
-        var _d = false;
-        var _e = void 0;
-        try {
-            for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-                _arr.push(_s.value);
-                if (i && _arr.length === i) {
-                    break;
-                }
-            }
-        } catch (err) {
-            _d = true;
-            _e = err;
-        } finally {
-            try {
-                _n || null == _i['return'] || _i['return']();
-            } finally {
-                if (_d) {
-                    throw _e;
-                }
-            }
-        }
-        return _arr;
-    }
-}
-
-function _arrayWithHoles(arr) {
-    if (Array.isArray(arr)) {
-        return arr;
-    }
-}
-
-export function parseModel(objective, constraints) {
-    if ('' == objective | 0 == constraints.length) {
-        return [ [], '', '' ];
-    }
-    var modelVariables = [];
-    var modelCoeficients = [];
-    var modelConstraints = [];
-    var modelEqualities = [];
-    var objectiveRegex = /(max|min)(?:.*\s*)(\w)(?:\s*=) ((?:\s*[+-]?\s*\d*\.*\d*\w\d*)+)/i;
-    var constraintRegex = /((?:\s*[+-]?\s*\d*\.*\d*\w\d*)+)\s*(=|<=|>=)\s*(\d+)/i;
-    var _objective$match = objective.match(objectiveRegex), _objective$match2 = _slicedToArray(_objective$match, 4), regexResult = _objective$match2[0], type = _objective$match2[1], objectiveVariable = _objective$match2[2], objectiveEquation = _objective$match2[3];
+    let [regexResult, type, objectiveVariable, objectiveEquation] = objective.match(objectiveRegex);
     type = type.toLowerCase();
-    var _parseEquation = parseEquation(objectiveEquation), _parseEquation2 = _slicedToArray(_parseEquation, 2), objectiveCoeficients = _parseEquation2[0], objectiveVariables = _parseEquation2[1];
-    constraints.forEach((function(d) {
-        var _d$match = d.match(constraintRegex), _d$match2 = _slicedToArray(_d$match, 4), regexResult = _d$match2[0], equation = _d$match2[1], equality = _d$match2[2], constraint = _d$match2[3];
+    let [objectiveCoeficients, objectiveVariables] = parseEquation(objectiveEquation);
+
+    constraints.forEach (d => {
+        let [regexResult, equation, equality, constraint] = d.match(constraintRegex);
         modelConstraints.push(parseFloat(constraint));
         modelEqualities.push(equality);
-        var _parseEquation3 = parseEquation(equation), _parseEquation4 = _slicedToArray(_parseEquation3, 2), constraintCoeficients = _parseEquation4[0], constraintVariables = _parseEquation4[1];
+        let [constraintCoeficients, constraintVariables] = parseEquation(equation);
         modelVariables.push(constraintVariables);
         modelCoeficients.push(constraintCoeficients);
-    }));
+    });
     modelVariables.push(objectiveVariables);
     modelCoeficients.push(objectiveCoeficients);
-    modelConstraints.push(0);
-    var _buildTableau = buildTableau(modelVariables, modelCoeficients, modelConstraints, modelEqualities, objectiveVariable, type), _buildTableau2 = _slicedToArray(_buildTableau, 2), model = _buildTableau2[0], variables = _buildTableau2[1];
-    return [ model, variables, type ];
-}
+    modelConstraints.push(0); 
 
-function parseEquation(equation) {
-    var elementRegex = /\s*[+-]?\s*\d*\.*\d*\w\d*/g;
-    var coeficentRegex = /\s*([+-]?)\s*(\d*\.*\d*)(\w\d*)/;
-    var coeficients = [];
-    var variables = [];
-    var elements = _toConsumableArray(equation.matchAll(elementRegex));
-    elements.forEach((function(element) {
-        var _element$0$match = element[0].match(coeficentRegex), _element$0$match2 = _slicedToArray(_element$0$match, 4), regexResult = _element$0$match2[0], sign = _element$0$match2[1], coeficient = _element$0$match2[2], variable = _element$0$match2[3];
-        coeficient = '' == coeficient ? 1 : coeficient;
+    let [model, variables] = buildTableau(modelVariables, modelCoeficients, modelConstraints, modelEqualities, objectiveVariable, type);
+
+    return [model, variables, type];
+};
+
+/**
+ * @function parseEquation
+ * @desc Parses each constraint equation separably into their coefficients and variables.
+ * @param {string} equation An individual constraint equation in the form of `'x + y <= 4'`.
+ * @returns {Array} An array consisting of two arrays: an array of coefficients (strings)
+ * and an array of variables (strings).
+ */
+function parseEquation (equation) {
+    
+    /** matches single element */
+    const elementRegex = /\s*[+-]?\s*\d*\.*\d*\w\d*/g;
+
+    /* group 1 = sign; group 2 = coefficient; group 3 = variable */
+    const coeficentRegex = /\s*([+-]?)\s*(\d*\.*\d*)(\w\d*)/;
+
+    let coeficients = [];
+    let variables = [];
+
+    let elements = [...equation.matchAll(elementRegex)];
+
+    elements.forEach(element => {
+        let [regexResult, sign, coeficient, variable] = element[0].match(coeficentRegex);
+        coeficient = coeficient == '' ? 1 : coeficient;
         coeficients.push(parseFloat(sign + coeficient));
         variables.push(variable);
-    }));
-    return [ coeficients, variables ];
+    });
+
+    return [coeficients, variables];
 }
 
+/**
+ * @function buildTableau
+ * @desc Builds a tableau suitable for executing the simplex method.
+ * @param {Array} variables An array of strings representing the variables (eg., ['x1, 'y1', ...]).
+ * @param {Array} coefficients A two-dimensional array of numbers representing the coefficients
+ * of the variables on the left hand side of the constraint equations and the right hand
+ * side of the objective function (e.g., [[3, 4.5, 7, ...], [1, 17, 8, ...], [12, 11, 2.2, ...]]).
+ * @param {Array} constraints An array of numbers representing the constraint values on the right
+ * hand side of the constraint equation (e.g., [8, 2.1, 45, ...]).
+ * @param {Array} equalities An array of strings representing the constraint operators (e.g.,
+ * ['=', '<=', '>=', ...]).
+ * @param {string} objectiveVariable A string representing the objective variable name for the
+ * left hand side of the objective function.
+ * @param {string} type The type of optimization ['min' | 'max'].
+ * @returns {Array} A two-dimensional array containing the simplex tableau (a two-dimensional array
+ * of numbers) and the model variables. For a model with a <= type a positive *slack* variable is
+ * added. For a >= type a negative *extra* and positive *artificial* variables are added. For an =
+ * type model a positive *artificial* variable is added.
+ */
 function buildTableau(variables, coeficients, constraints, equalities, objectiveVariable, type) {
-    var model = [];
-    var uniqueVariables = _toConsumableArray(new Set(variables.reduce((function(a, b) {
-        return a.concat(b);
-    }), [])));
-    coeficients.forEach((function(coeficient, row) {
-        var tmp = Array.apply(null, Array(uniqueVariables.length)).map(Number.prototype.valueOf, 0);
-        coeficient.forEach((function(item, index) {
-            var pos = uniqueVariables.indexOf(variables[row][index]);
+  
+    let model = [];
+
+    let uniqueVariables = [... new Set(variables.reduce((a,b) => {return a.concat(b)}, []))];
+
+    coeficients.forEach((coeficient, row) => {
+        let tmp = Array.apply(null, Array(uniqueVariables.length)).map(Number.prototype.valueOf,0);
+        coeficient.forEach((item, index) => {
+            let pos = uniqueVariables.indexOf(variables[row][index]);
             tmp[pos] = row == coeficients.length - 1 ? -item : item;
-        }));
+        });
         model.push(tmp);
-    }));
-    var slackVariableCount = equalities.reduce((function(a, b) {
-        return '<=' == b ? ++a : a;
-    }), 0);
-    var extraVariableCount = equalities.reduce((function(a, b) {
-        return '>=' == b ? ++a : a;
-    }), 0);
-    var alternateVariableCount = equalities.reduce((function(a, b) {
-        return '>=' == b || '=' == b ? ++a : a;
-    }), 0);
-    for (var i = 0; i < slackVariableCount; i++) {
-        uniqueVariables.push('s' + i);
-    }
-    for (var _i2 = 0; _i2 < extraVariableCount; _i2++) {
-        uniqueVariables.push('e' + _i2);
-    }
-    for (var _i3 = 0; _i3 < alternateVariableCount; _i3++) {
-        uniqueVariables.push('a' + _i3);
-    }
+    });
+
+    let slackVariableCount = equalities.reduce((a, b) => {return b == '<=' ? ++a : a}, 0);
+    let extraVariableCount = equalities.reduce((a, b) => {return b == '>=' ? ++a : a}, 0);
+    let alternateVariableCount = equalities.reduce((a, b) => {return b == '>=' || b == '=' ? ++a : a}, 0);
+    
+    for (let i = 0; i < slackVariableCount; i++) {uniqueVariables.push('s' + i)};
+    for (let i = 0; i < extraVariableCount; i++) {uniqueVariables.push('e' + i)};
+    for (let i = 0; i < alternateVariableCount; i++) {uniqueVariables.push('a' + i)};
     uniqueVariables.push(objectiveVariable);
-    var totalNewVariableCount = uniqueVariables.length - model[0].length;
-    var tmp = Array.apply(null, Array(totalNewVariableCount)).map(Number.prototype.valueOf, 0);
-    model.forEach((function(row) {
-        row.push.apply(row, _toConsumableArray(tmp));
-    }));
-    var lePositions = equalities.reduce((function(a, b, i) {
-        return '<=' == b ? a.concat(i) : a;
-    }), []);
-    lePositions.forEach((function(row, index) {
-        var column = uniqueVariables.indexOf('s' + index);
+
+    let totalNewVariableCount = uniqueVariables.length - model[0].length;
+    let tmp = Array.apply(null, Array(totalNewVariableCount)).map(Number.prototype.valueOf,0);;
+    model.forEach(row => {row.push(...tmp)});
+
+    let lePositions = equalities.reduce((a,b,i) =>{return b == '<=' ? a.concat(i) : a},[]);
+    lePositions.forEach((row, index) => {
+        let column = uniqueVariables.indexOf('s' + index);
         model[row][column] = 1;
-    }));
-    var aPositions = equalities.reduce((function(a, b, i) {
-        return '>=' == b || '=' == b ? a.concat(i) : a;
-    }), []);
-    aPositions.forEach((function(row, index) {
-        var column = uniqueVariables.indexOf('a' + index);
+    });
+
+    let aPositions = equalities.reduce((a,b,i) =>{return b == '>=' || b == '=' ? a.concat(i) : a},[]);
+    aPositions.forEach((row, index) => {
+        let column = uniqueVariables.indexOf('a' + index);
         model[row][column] = 1;
-    }));
-    var gePositions = equalities.reduce((function(a, b, i) {
-        return '>=' == b ? a.concat(i) : a;
-    }), []);
-    gePositions.forEach((function(row, index) {
-        var column = uniqueVariables.indexOf('e' + index);
+    });
+
+    let gePositions = equalities.reduce((a,b,i) =>{return b == '>=' ? a.concat(i) : a},[]);
+    gePositions.forEach((row, index) => {
+        let column = uniqueVariables.indexOf('e' + index);
         model[row][column] = -1;
-    }));
-    model.forEach((function(row, index) {
+    });
+
+    model.forEach ((row, index) => {
         row[row.length - 1] = constraints[index];
-    }));
-    return [ model, uniqueVariables ];
+    });
+
+    return [model, uniqueVariables];
+
 }
