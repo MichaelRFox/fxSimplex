@@ -10,6 +10,10 @@
 
 :warning: - Breaking Change
 
+# v2.0.1
+## 26 Oct, 2021
+- :bug: Fixed typo in README.md - link to docs
+
 # v2.0.0
 ## 26 Oct, 2021
 - :warning: src files are now in ES6 module format. The files in the *dist/* folder are still transpiled.

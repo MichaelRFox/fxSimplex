@@ -22,4 +22,4 @@ npm install -l fxsimplex --save
 ## API Documentation
 See the API documentation at:
 
-https://michaelrfox.github.io/docs/fxSimplex/2.0.0/
+https://michaelrfox.github.io/docs/fxsimplex/2.0.1/
